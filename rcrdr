@@ -1,0 +1,36 @@
+#!/bin/bash
+
+RCRDR_LOG="${pwd}/rcrdr.log"
+
+AUDIO_TYPE=
+echo "==> Looking for audio to record"
+if [[ "$(ls | grep -i flac | wc -l)" != "0" ]]; then
+	echo "==> Found flac; using flac encoder/decoder"
+	AUDIO_TYPE="flac"
+elif [[ "$(ls | grep -i mp3 | wc -l)" != "0"  ]]; then
+	echo "==> Found mp3; using lame encoder/decoder"
+	AUDIO_TYPE="mp3"
+fi
+
+echo "==> Decoding audio"
+case ${AUDIO_TYPE} in
+	flac)
+		for i in *.flac;
+		do
+			flac -d "${i}" >> ${RCRDR_LOG} 2>&1
+			[[ $? -eq 0 ]] || echo "Decoding failed" && exit 1
+		done
+		;;
+	mp3)
+		for i in *.mp3;
+		do
+			lame --decode "${i}" "$(basename "$i" .mp3)".wav >> ${RCRDR_LOG} 2>&1
+			[[ $? -eq 0 ]] || echo "Decoding failed" && exit 1
+		done
+		;;
+esac
+echo "==> Burning audio CD"
+wodim -v -pad speed=1 dev=/dev/sr0 -dao -swab *.wav
+echo "==> Cleaning up"
+rm *.wav
+echo "==> Done!"
