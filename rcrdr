@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RCRDR_LOG="${pwd}/rcrdr.log"
+RCRDR_LOG="$(pwd)/rcrdr.log"
 
 AUDIO_TYPE=
 echo "==> Looking for audio to record"
@@ -20,15 +20,15 @@ case ${AUDIO_TYPE} in
 	flac)
 		for i in *.flac;
 		do
-			flac -d "${i}" >> ${RCRDR_LOG} 2>&1
-			[[ $? -eq 0 ]] || echo "Decoding failed" && exit 1
+			flac -d "${i}"
+			[[ $? -eq 0 ]] || (echo "Decoding failed" && exit 1)
 		done
 		;;
 	mp3)
 		for i in *.mp3;
 		do
-			lame --decode "${i}" "$(basename "$i" .mp3)".wav >> ${RCRDR_LOG} 2>&1
-			[[ $? -eq 0 ]] || echo "Decoding failed" && exit 1
+			lame --decode "${i}" "$(basename "$i" .mp3)".wav
+			[[ $? -eq 0 ]] || (echo "Decoding failed" && exit 1)
 		done
 		;;
 esac
