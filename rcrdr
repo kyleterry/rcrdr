@@ -10,6 +10,9 @@ if [[ "$(ls | grep -i flac | wc -l)" != "0" ]]; then
 elif [[ "$(ls | grep -i mp3 | wc -l)" != "0"  ]]; then
 	echo "==> Found mp3; using lame encoder/decoder"
 	AUDIO_TYPE="mp3"
+else
+	echo "==> ERROR: No audio files found"
+	exit 1
 fi
 
 echo "==> Decoding audio"
@@ -30,7 +33,7 @@ case ${AUDIO_TYPE} in
 		;;
 esac
 echo "==> Burning audio CD"
-wodim -v -pad speed=1 dev=/dev/sr0 -dao -swab *.wav
+wodim -pad speed=1 dev=/dev/sr0 -dao -swab *.wav
 echo "==> Cleaning up"
 rm *.wav
 echo "==> Done!"
