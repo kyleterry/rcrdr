@@ -1,6 +1,28 @@
 #!/bin/bash
 
 RCRDR_LOG="$(pwd)/rcrdr.log"
+DEVICE=/dev/cdrw
+
+usage() {
+	echo "Usage: ${0} [-d /dev/<recording device>]"
+}
+
+while getopts "d:" opt; do
+	case "${opt}" in
+		d)
+			DEVICE=${OPTARG}
+			if [[ ! -b ${DEVICE} ]]; then
+				echo "==> ERROR: ${DEVICE} is not a valid device"
+				exit 1
+			fi
+			echo "==> Using ${DEVICE} as recording device"
+			;;
+		*)
+			usage
+			exit 1
+			;;
+	esac
+done
 
 AUDIO_TYPE=
 echo "==> Looking for audio to record"
@@ -33,7 +55,7 @@ case ${AUDIO_TYPE} in
 		;;
 esac
 echo "==> Burning audio CD"
-wodim -pad speed=1 dev=/dev/sr0 -dao -swab *.wav
+wodim -pad speed=1 dev=${DEVICE} -dao -swab *.wav
 echo "==> Cleaning up"
 rm *.wav
 echo "==> Done!"
