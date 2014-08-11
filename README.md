@@ -13,5 +13,5 @@ I tested it on Debian Jessie. So that, I guess? *shrug*
 ```bash
 cd /my/favorite/album
 # insert blank cd
-./rcrdr
+./rcrdr [-d /dev/<device>]
 ```
